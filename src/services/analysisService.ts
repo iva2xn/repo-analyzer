@@ -1,4 +1,3 @@
-
 import { AnalysisData } from "@/components/AnalysisResults"
 
 // Service for analyzing repositories using Gemini 2.0 API
@@ -279,7 +278,7 @@ export class AnalysisService {
     return features
   }
   
-  private static async detectCommonFeatures(owner: string, repo: string, contents: any[]): Promise<string[] {
+  private static async detectCommonFeatures(owner: string, repo: string, contents: any[]): Promise<string[]> {
     const features: string[] = ['User Interface Components', 'Responsive Design']
     
     // Check for common files that indicate specific features
