@@ -1,21 +1,46 @@
 
+import { useState } from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
-import { DashboardCard } from "@/components/DashboardCard"
-import { RevenueChart, SalesChart } from "@/components/DashboardChart"
-import { RecentActivity } from "@/components/RecentActivity"
-import { 
-  DollarSign, 
-  Users, 
-  CreditCard, 
-  Activity,
-  Bell,
-  Search
-} from "lucide-react"
+import { GitHubRepoInput } from "@/components/GitHubRepoInput"
+import { AnalysisResults, AnalysisData } from "@/components/AnalysisResults"
+import { AnalysisService } from "@/services/analysisService"
 import { Button } from "@/components/ui/button"
+import { ArrowLeft, Bell, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
 
 const Index = () => {
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
+
+  const handleAnalyze = async (repoUrl: string) => {
+    setIsLoading(true)
+    try {
+      console.log('Starting analysis for:', repoUrl)
+      const data = await AnalysisService.analyzeRepository(repoUrl)
+      setAnalysisData(data)
+      toast({
+        title: "Analysis Complete",
+        description: "Repository has been successfully analyzed!",
+      })
+    } catch (error) {
+      console.error('Analysis failed:', error)
+      toast({
+        title: "Analysis Failed", 
+        description: "There was an error analyzing the repository. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleReset = () => {
+    setAnalysisData(null)
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-muted/40">
@@ -30,7 +55,7 @@ const Index = () => {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search..."
+                    placeholder="Search repositories..."
                     className="pl-8"
                   />
                 </form>
@@ -44,82 +69,75 @@ const Index = () => {
 
           {/* Main Content */}
           <main className="flex-1 p-4 lg:p-6">
-            <div className="space-y-6">
-              {/* Page Header */}
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                <p className="text-muted-foreground">
-                  Welcome back! Here's what's happening with your business.
-                </p>
-              </div>
-
-              {/* Stats Cards */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <DashboardCard
-                  title="Total Revenue"
-                  value="$45,231.89"
-                  description="from last month"
-                  icon={DollarSign}
-                  trend={{ value: "20.1%", isPositive: true }}
-                />
-                <DashboardCard
-                  title="Subscriptions"
-                  value="+2,350"
-                  description="from last month"
-                  icon={Users}
-                  trend={{ value: "180.1%", isPositive: true }}
-                />
-                <DashboardCard
-                  title="Sales"
-                  value="+12,234"
-                  description="from last month"
-                  icon={CreditCard}
-                  trend={{ value: "19%", isPositive: true }}
-                />
-                <DashboardCard
-                  title="Active Now"
-                  value="+573"
-                  description="from last hour"
-                  icon={Activity}
-                  trend={{ value: "2%", isPositive: false }}
-                />
-              </div>
-
-              {/* Charts and Activity */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <RevenueChart />
-                <RecentActivity />
-              </div>
-
-              {/* Additional Chart */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <SalesChart />
-                <div className="col-span-4 space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <DashboardCard
-                      title="Conversion Rate"
-                      value="3.2%"
-                      description="from last week"
-                      icon={Activity}
-                      trend={{ value: "0.3%", isPositive: true }}
-                    />
-                    <DashboardCard
-                      title="Average Order"
-                      value="$127.50"
-                      description="from last week"
-                      icon={DollarSign}
-                      trend={{ value: "5.2%", isPositive: true }}
-                    />
+            <div className="max-w-6xl mx-auto space-y-6">
+              {!analysisData ? (
+                <>
+                  {/* Page Header */}
+                  <div className="text-center space-y-2">
+                    <h1 className="text-3xl font-bold tracking-tight">
+                      GitHub Repository Cost Analyzer
+                    </h1>
+                    <p className="text-muted-foreground text-lg">
+                      Get accurate development cost estimates powered by AI analysis
+                    </p>
                   </div>
-                  <DashboardCard
-                    title="Customer Satisfaction"
-                    value="4.8/5.0"
-                    description="based on 2,341 reviews"
-                    icon={Users}
-                    trend={{ value: "0.2", isPositive: true }}
-                  />
-                </div>
-              </div>
+
+                  {/* Input Form */}
+                  <div className="flex justify-center">
+                    <GitHubRepoInput onAnalyze={handleAnalyze} isLoading={isLoading} />
+                  </div>
+
+                  {/* Features Section */}
+                  <div className="grid gap-6 md:grid-cols-3 mt-12">
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                        <Search className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold">AI-Powered Analysis</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Advanced code analysis using Gemini 2.0 to understand your repository structure
+                      </p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                        <Bell className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold">Accurate Estimates</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Get realistic cost estimates based on complexity, LOC, and market rates
+                      </p>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                        <ArrowLeft className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold">Detailed Insights</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Comprehensive breakdown of components, dependencies, and features
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Back Button */}
+                  <div className="flex items-center gap-4">
+                    <Button variant="outline" onClick={handleReset}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Analyze Another Repository
+                    </Button>
+                    <div>
+                      <h1 className="text-2xl font-bold">Analysis Results</h1>
+                      <p className="text-muted-foreground">
+                        Development cost estimates and repository insights
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Analysis Results */}
+                  <AnalysisResults data={analysisData} />
+                </>
+              )}
             </div>
           </main>
         </div>

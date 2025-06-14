@@ -8,7 +8,9 @@ import {
   FileText,
   MessageSquare,
   CreditCard,
-  Package
+  Github,
+  Code,
+  DollarSign
 } from "lucide-react"
 
 import {
@@ -26,27 +28,27 @@ import {
 
 const mainItems = [
   {
-    title: "Dashboard",
+    title: "Analyzer",
     url: "/",
     icon: Home,
   },
   {
-    title: "Analytics",
+    title: "Cost Calculator",
+    url: "#",
+    icon: DollarSign,
+  },
+  {
+    title: "Repository Stats",
     url: "#",
     icon: BarChart3,
   },
   {
-    title: "Customers",
+    title: "Code Analysis",
     url: "#",
-    icon: Users,
+    icon: Code,
   },
   {
-    title: "Products",
-    url: "#",
-    icon: Package,
-  },
-  {
-    title: "Orders",
+    title: "Reports",
     url: "#",
     icon: FileText,
   },
@@ -54,17 +56,17 @@ const mainItems = [
 
 const secondaryItems = [
   {
-    title: "Messages",
+    title: "GitHub Integration",
     url: "#",
-    icon: MessageSquare,
+    icon: Github,
   },
   {
-    title: "Calendar",
+    title: "History",
     url: "#",
     icon: Calendar,
   },
   {
-    title: "Billing",
+    title: "Pricing",
     url: "#",
     icon: CreditCard,
   },
@@ -81,14 +83,14 @@ export function AppSidebar() {
       <SidebarHeader className="border-b px-6 py-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <BarChart3 className="w-4 h-4 text-primary-foreground" />
+            <Github className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold">Dashboard</span>
+          <span className="text-lg font-semibold">RepoAnalyzer</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main</SidebarGroupLabel>
+          <SidebarGroupLabel>Analysis</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -128,8 +130,8 @@ export function AppSidebar() {
             <Users className="w-4 h-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-muted-foreground">john@example.com</p>
+            <p className="text-sm font-medium">Developer</p>
+            <p className="text-xs text-muted-foreground">Cost Analyst</p>
           </div>
         </div>
       </SidebarFooter>
